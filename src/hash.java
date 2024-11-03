@@ -36,7 +36,6 @@ public class hash {
             
 
             try {
-                System.out.println(args + args[0]);
 
             switch (tipe(args)){
                 case 1:
@@ -55,7 +54,8 @@ public class hash {
                     if(correctStructure(args,2) ){
                         hash = args[0];
                         cadena = args[1];
-                        hashText(hash, cadena);
+                        System.out.println(hashText(hash, cadena));
+                        
                     }else{
                         throw new IOException();
                     }
@@ -66,7 +66,7 @@ public class hash {
                     if(correctStructure(args,3)){
                         hash = args[0];
                         cadena = args[2];
-                        hashFile(hash, cadena);
+                        System.out.println(hashFile(hash, cadena));
 
                     }else{
                         throw new IOException();
@@ -81,23 +81,23 @@ public class hash {
             }
 
         }else{
-            System.out.println("Bad format");
+            System.out.println("Error format or Bad algorithm just MD5, SHA-1 and SHA-256");
         }
 
     }
 
     private static void hashHelp(String h) {
         if(h.equals("-h")){
-            System.out.println("Options of comands: ");
-            System.out.println("Example: \t hash md5 text or hash hash_type -f  file.txt");
-            System.out.println(" -h: \t help");
-            System.out.println(" -f: \t Especifie the file that you want make a hash");
-            System.out.println(" -hs: \t help");
+            System.out.println("\n Example --> hash md5 text or hash hash_type -f file.txt ");
             
-            System.out.println("Hash Options: ");
-            System.out.println("md5");
-            System.out.println("sha-1");
-            System.out.println("sha-256");
+            System.out.println("\n Options of comands: ");
+            System.out.println(" -h: \t help");
+            System.out.println(" -f: \t Especifie the file that you want make a hash ");
+            System.out.println(" -hs: \t help");
+            System.out.println("\n Hash Options: ");
+            System.out.println(" md5");
+            System.out.println(" sha-1");
+            System.out.println(" sha-256\n");
         }
     }
 
@@ -115,30 +115,30 @@ public class hash {
 
         return hexString.toString();
 
-    }
+        }
 
     private static String hashFile(String hash, String file) throws NoSuchAlgorithmException, IOException {
         MessageDigest md = MessageDigest.getInstance(hash);
-        InputStream is = Files.newInputStream(Paths.get(file));
-        DigestInputStream dis = new DigestInputStream(is, md);
-        byte[] buffer = new byte[1024];
+        try (InputStream is = Files.newInputStream(Paths.get(file));
+            DigestInputStream dis = new DigestInputStream(is, md)) {
+            byte[] buffer = new byte[1024];
+            while (dis.read(buffer) != -1) {
+            // Reading file data
+            }
+        }
         byte[] digest = md.digest();
         StringBuilder hexString = new StringBuilder();
-
-        while (dis.read(buffer) != -1);
         for (byte b : digest) {
             String hex = Integer.toHexString(0xff & b);
             if (hex.length() == 1) {
-                hexString.append('0');
+            hexString.append('0');
             }
-
             hexString.append(hex);
-        }
-
-        return hexString.toString();
+    }
+    return hexString.toString();
     }
 
-    private static boolean correctFormat(String[] args) {
+        private static boolean correctFormat(String[] args) {
         args = Arrays.stream(args).filter(a -> !a.isEmpty()).toArray(String[]::new);
         return (args.length >= 1);
     }
